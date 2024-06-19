@@ -1,0 +1,7 @@
+dash==2.15.0
+dash_bootstrap_components==1.5.0
+gTTS==2.5.1
+openpyxl==3.0.10
+pandas==2.0.3
+gunicorn
+dash-tools
