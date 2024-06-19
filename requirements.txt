@@ -5,3 +5,5 @@ openpyxl==3.0.10
 pandas==2.0.3
 gunicorn
 dash-tools
+numpy==1.23.0
+scipy==1.8.0
