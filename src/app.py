@@ -28,13 +28,21 @@ lindex = list(dfthe.index)
 lcol = dfthe['structure'].unique()
 loptions = [{'label': str(option), 'value': option} for option in lcol]
 
-card_style = {"width": "100%", "margin": "auto", "padding": "10px", "borderColor": "#d9534f", "borderWidth": "2px"}
+# styly of the cards
+card_style = {"width": "100%",
+              "margin": "auto",
+              "padding": "10px",
+              "borderColor": "#d9534f",
+              "borderWidth": "2px"}
 # Card for the warm-up
 card_warm = dbc.Card(
     [
         html.H6(
-            [html.I(className="fas fa-running fa-3x", style={'color': 'grey'}), ' ',
-             'TRANSLATION WARM-UP    .', html.I(className="fas fa-running fa-3x", style={'color': 'grey'})],
+            [
+            html.I(className="fas fa-running fa-3x", style={'color': 'grey'}), ' ',
+             'TRANSLATION WARM-UP    .',
+            html.I(className="fas fa-running fa-3x", style={'color': 'grey'})
+            ],
             className="class-subtitle"
         ),
         dbc.CardBody(
@@ -47,30 +55,28 @@ card_warm = dbc.Card(
                 html.Div(id='container-button-timestamp'),
                 dbc.Button('ENGLISH', id='btn-nclicks-2', n_clicks=0, color="primary", className="me-1"),
                 html.Div(id='container-button-timestamp2'),
-                html.Audio(id='tts-audio', controls=True, style={'width': '100%'})
+                html.Audio(id='tts-audiowarm', controls=True, style={'width': '100%'})
             ],
         )
     ],
-    color="danger",
-    outline=True,
     style=card_style
 )
-
 # Data for the reported speech
 dfreport = dithe['reportedsp']
 lindexrep = list(dfreport.index)
 lcolrep = dfreport['story'].unique()
 loptionsrep = [{'label': str(option), 'value': option} for option in lcolrep]
 
-
-
 # Card for the reported
 card_rep = dbc.Card(
     [
         html.H6(
-            [html.I(className="fas fa-comments fa-3x", style={'color': 'grey'}), ' ',
-             'REPORTED SPEECH     .', html.I(className="fas fa-comments fa-3x", style={'color': 'grey'})],
-            className="class-subtitle"
+            [html.I(className="fas fa-comments fa-3x", style={'color': 'grey'}),
+             ' ',
+             'REPORTED SPEECH     .',
+             html.I(className="fas fa-comments fa-3x", style={'color': 'grey'})
+             ],
+             className="class-subtitle"
         ),
         dbc.CardBody(
             [
@@ -82,25 +88,24 @@ card_rep = dbc.Card(
                 html.Div(id='container-button-timestamprep'),
                 dbc.Button('REPORTED', id='btn-nclicksrep-2', n_clicks=0, color="primary", className="me-1"),
                 html.Div(id='container-button-timestamp2rep'),
+                html.Audio(id='tts-audiorep', controls=True, style={'width': '100%'})
             ],
         )
     ],
-    color="danger",
-    outline=True,
     style=card_style
 )
-
 # Data for the pictures
 dfpic = dithe['pictures']
 didfpic = dfpic.to_dict('records')
-
 # Card for the pictures
 card_pic = dbc.Card(
     [
         html.H6(
-            [html.I(className="fas fa-camera fa-3x", style={'color': 'grey'}), ' ',
-             'DESCRIBE THE PICTURES', html.I(className="fas fa-camera fa-3x", style={'color': 'grey'})],
-            className="class-subtitle"
+            [html.I(className="fas fa-camera fa-3x", style={'color': 'grey'}),
+             ' ',
+             'DESCRIBE THE PICTURES',
+             html.I(className="fas fa-camera fa-3x", style={'color': 'grey'})],
+             className="class-subtitle"
         ),
         dbc.CardBody(
             [
@@ -110,26 +115,26 @@ card_pic = dbc.Card(
                 html.Div(id='container-button-timestamppic'),
                 dbc.Button('DESCRIPTION', id='btn-nclickspic-2', n_clicks=0, color="primary", className="me-1"),
                 html.Div(id='container-button-timestamp2pic'),
+                html.Audio(id='tts-audiopic', controls=True, style={'width': '100%'})
             ],
         )
     ],
-    color="danger",
-    outline=True,
     style=card_style
 )
-
 # Data for the interrogative challenge
 dfinter = dithe['question']
 lindexinter = list(dfinter.index)
 lcolinter = dfinter['word'].unique()
 loptionsinter = [{'label': str(option), 'value': option} for option in lcolinter]
-
 # Card for interrogative
 card_inter = dbc.Card(
     [
         html.H6(
-            [html.I(className="fas fa-question fa-3x", style={'color': 'grey'}), ' ',
-             'INTERROGATIVE CHALLENGE    .', html.I(className="fas fa-question fa-3x", style={'color': 'grey'})],
+            [html.I(className="fas fa-question fa-3x", style={'color': 'grey'}),
+             ' ',
+             'INTERROGATIVE CHALLENGE    .',
+             html.I(className="fas fa-question fa-3x", style={'color': 'grey'})
+             ],
             className="class-subtitle"
         ),
         dbc.CardBody(
@@ -142,19 +147,19 @@ card_inter = dbc.Card(
                 html.Div(id='container-button-timestampinter'),
                 dbc.Button('QUESTION', id='btn-nclicksinter-2', n_clicks=0, color="primary", className="me-1"),
                 html.Div(id='container-button-timestamp2inter'),
+                html.Audio(id='tts-audiointer', controls=True, style={'width': '100%'})
             ],
         )
     ],
-    color="danger",
-    outline=True,
     style=card_style
 )
 
 app.layout = dbc.Container([
-    dcc.Tabs([
+    dcc.Tabs(
+        [
         dcc.Tab(
-            label='Translation Warm-Up', children=[
-            dbc.Row([
+            label='Translation Warm-Up',
+            children=[dbc.Row([
                 dbc.Col(card_warm, width={'size': 12})
             ], justify='center', align='center')
             ],
@@ -258,7 +263,7 @@ def update_output(selected_options):
     [Output('container-button-timestamp', 'children'),
      Output('diordenadatoday-stored', 'data'),
      Output('container-button-timestamp2', 'children')],
-    Output('tts-audio', 'src'),
+    Output('tts-audiowarm', 'src'),
     [Input('btn-nclicks-1', 'n_clicks'),
      Input('btn-nclicks-2', 'n_clicks')],
     [State("didfthe-stored", 'data'),
@@ -269,9 +274,7 @@ def display_sentence(btn1, btn2, didfthe, diordenadatoday):
     ctx = callback_context
     if not ctx.triggered:
         return html.Div(), [], ""
-
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
     if button_id == "btn-nclicks-1":
         dfthe = pd.DataFrame(didfthe)
         randomn = random.choice(list(dfthe.index))
@@ -280,58 +283,23 @@ def display_sentence(btn1, btn2, didfthe, diordenadatoday):
         msg = esp
         diordenadatoday = row.to_dict('records')
         return html.Div(msg), diordenadatoday, "",""
-
     elif button_id == "btn-nclicks-2":
         row = pd.DataFrame(diordenadatoday)
         eng = row.loc[:, 'eng']
         speech_text = eng[0]
-        print(speech_text)
-
         # Convert text to speech using gTTS
         tts = gTTS(text=speech_text, lang='en',tld='ca')
-
         # Save the audio to a bytes buffer
         audio_buffer = io.BytesIO()
         tts.write_to_fp(audio_buffer)
-
         # Encode the audio in base64
         audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
-
         # Create a data URI for the audio
         audio_src = f"data:audio/mp3;base64,{audio_base64}"
         return no_update, diordenadatoday, html.Div(eng), audio_src
-
     return html.Div(), [], "",""
-
-
-# @app.callback(
-#     Output('tts-audio', 'src'),
-#     Input('btn-tts', 'n_clicks'),
-#     State('container-button-timestamp2', 'children')
-# )
-# def text_to_speech(n_clicks, text):
-#     if n_clicks == 0 or not text:
-#         raise PreventUpdate
-#
-#     # Extract text from the Div component
-#     speech_text = text['props']['children'][0]
-#     print(speech_text)
-#
-#     # Convert text to speech using gTTS
-#     tts = gTTS(text=speech_text, lang='en')
-#
-#     # Save the audio to a bytes buffer
-#     audio_buffer = io.BytesIO()
-#     tts.write_to_fp(audio_buffer)
-#
-#     # Encode the audio in base64
-#     audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
-#
-#     # Create a data URI for the audio
-#     audio_src = f"data:audio/mp3;base64,{audio_base64}"
-#
-#     return audio_src
-# callbacks for the reported speech
+# callbacks for reported
+# select an option
 @app.callback(
     [Output('container-button-timestamp0rep', 'children'),
      Output("didfreport-stored", 'data')],
@@ -339,63 +307,77 @@ def display_sentence(btn1, btn2, didfthe, diordenadatoday):
     # prevent_initial_call=True
 )
 def update_output(selected_options):
-    # if 'all' in selected_options:
-    #     msg = 'You have selected: All option'
-    #     didfreport = dfreport.to_dict('records')
-    #     return html.Div(msg), didfreport
-    # else:
         msg = f'You have selected: {selected_options}'
         dffiltrada = dfreport.loc[dfreport['story'] == selected_options]
         didfreport = dffiltrada.to_dict('records')
         return html.Div(msg), didfreport
 
-
 @app.callback(
     [Output('container-button-timestamprep', 'children'),
      Output('diordenadarep-stored', 'data'),
-     Output('dirow', 'data')],
-    [Input('btn-nclicksrep-1', 'n_clicks')],
+     Output('container-button-timestamp2rep', 'children')],
+    Output('tts-audiorep', 'src'),
+    [Input('btn-nclicksrep-1', 'n_clicks'),
+     Input('btn-nclicksrep-2', 'n_clicks')],
     [State("didfreport-stored", 'data'),
-     State("diordenadarep-stored", 'data')],
+     State('diordenadarep-stored', 'data')],
     prevent_initial_call=True
 )
-def displayClick(btn1, didfreport,diordenadarep):
-    msg = "pulsa boton para una frase"
+def display_sentence(btn1, btn2, didfreport, diordenadarep):
+    ctx = callback_context
+    if not ctx.triggered:
+        return html.Div(), [], "", ""
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    if "btn-nclicksrep-1" in callback_context.triggered_id:
-        dfreport = pd.DataFrame(didfreport)
-        diordenadarep = diordenadarep or {'last_index': -1}  # Initialize state if not present
-        last_index = diordenadarep.get('last_index', -1)  # Get last selected index
+    if didfreport is None:
+        return html.Div("No data available"), [], "", ""
+
+    dfreport = pd.DataFrame(didfreport)
+    diordenadarep = diordenadarep or {'last_index': -1}  # Initialize state if not present
+    last_index = diordenadarep.get('last_index', -1)  # Get last selected index
+
+    if button_id == "btn-nclicksrep-1":
         if last_index + 1 >= len(dfreport):
-            # Reset index if we reach the end
-            last_index = -1
+            last_index = -1  # Reset index if we reach the end
         next_index = last_index + 1
-        row = dfreport.iloc[[next_index]]
-        direct = row.loc[:, 'direct']
+        row = dfreport.iloc[next_index]
+        direct = row['direct']
         msg = direct
+        speech_text = direct
+        nameless = speech_text.split(":", 1)[1].strip()
+
+        # Convert text to speech using gTTS
+        tts = gTTS(text=nameless, lang='en', tld='ca')
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        audiodir_src = f"data:audio/mp3;base64,{audio_base64}"
+
         diordenadarep = {'last_index': next_index}  # Update state with new index
-        last_index = diordenadarep['last_index']
-        row = dfreport.iloc[[last_index]]
-        dirow = row.to_dict('records')
-        return html.Div(msg), diordenadarep, dirow
+        return html.Div(msg), diordenadarep, "", audiodir_src
 
+    elif button_id == "btn-nclicksrep-2":
+        if last_index < 0:
+            return html.Div("No previous sentence available"), diordenadarep, "", ""
 
-@app.callback(
-    Output('container-button-timestamp2rep', 'children'),
-    [Input('btn-nclicksrep-2', 'n_clicks')],
-    [State('dirow', 'data')],
-    prevent_initial_call=True
-)
-def displayClick2(btn2, dirow):
-    msg = "pulsa boton para obtener solución"
-    if "btn-nclicksrep-2" in callback_context.triggered_id:
-        row = pd.DataFrame(dirow)
-        reported = row.loc[:,'reported']
+        row = dfreport.iloc[last_index]
+        reported = row['reported']
         msg = reported
+        speech_text = reported
 
-    return html.Div(msg)
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        audiorep_src = f"data:audio/mp3;base64,{audio_base64}"
+
+        return "", diordenadarep, html.Div(msg), audiorep_src
+
+    return html.Div(), [], "", ""
 
 # callbacks for the interrogative
+#select question type
 @app.callback(
     [Output('container-button-timestamp0inter', 'children'),
      Output("didfinter-stored", 'data')],
@@ -413,11 +395,12 @@ def update_output(selected_options):
         didfinter = dffiltrada.to_dict('records')
         return html.Div(msg), didfinter
 
-
+# anwer question
 @app.callback(
     [Output('container-button-timestampinter', 'children'),
      Output('diordenadatodayinter-stored', 'data'),
      Output('container-button-timestamp2inter', 'children')],
+    Output('tts-audiointer', 'src'),
     [Input('btn-nclicksinter-1', 'n_clicks'),
      Input('btn-nclicksinter-2', 'n_clicks')],
     [State("didfinter-stored", 'data'),
@@ -437,15 +420,30 @@ def display_sentence(btn1, btn2, didfinter, diordenadatodayinter):
         row = dfinter.iloc[[randomn]]
         ans = row.loc[:, 'answer']
         msg = ans
+        speech_text = ans.iloc[0]
+
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        audioans_src = f"data:audio/mp3;base64,{audio_base64}"
         diordenadatodayinter = row.to_dict('records')
-        return html.Div(msg), diordenadatodayinter, ""
+        return html.Div(msg), diordenadatodayinter, "",audioans_src
 
     elif button_id == "btn-nclicksinter-2":
         row = pd.DataFrame(diordenadatodayinter)
         que = row.loc[:, 'question']
-        return no_update, diordenadatodayinter, html.Div(que)
+        speech_text = que.iloc[0]
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        audioque_src = f"data:audio/mp3;base64,{audio_base64}"
+        return no_update, diordenadatodayinter, html.Div(que),audioque_src
 
-    return html.Div(), [], ""
+    return html.Div(), [], ""," "
 
 
 
@@ -454,6 +452,7 @@ def display_sentence(btn1, btn2, didfinter, diordenadatodayinter):
     [Output('container-button-timestamppic', 'children'),
     Output('diordenadatodaypic-stored', 'data'),
      Output('container-button-timestamp2pic', 'children')],
+    Output('tts-audiopic', 'src'),
     [Input('btn-nclickspic-1', 'n_clicks'),
      Input('btn-nclickspic-2', 'n_clicks')],
     [State("didfpic", 'data')],
@@ -463,7 +462,7 @@ def display_sentence(btn1, btn2, didfinter, diordenadatodayinter):
 def display_sentence(btn1, btn2, didfpic,diordenadatodaypic):
     ctx = callback_context
     if not ctx.triggered:
-        return html.Div(), [], ""
+        return html.Div(), [], "" ,""
 
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -474,14 +473,24 @@ def display_sentence(btn1, btn2, didfpic,diordenadatodaypic):
         pic = list(row.loc[:, 'name'])[0]
         msg = pic
         diordenadatodaypic = row.to_dict('records')
-        return html.Img(src="/assets/{}".format(msg), style={'width': '40%', 'max-width': '600px', 'margin': 'auto'}), diordenadatodaypic, ""
+        return html.Img(src="/assets/{}".format(msg), style={'width': '40%', 'max-width': '600px', 'margin': 'auto'}), diordenadatodaypic, "",""
 
     elif button_id == "btn-nclickspic-2":
         row = pd.DataFrame(diordenadatodaypic)
         eng = row.loc[:, 'eng']
-        return no_update, diordenadatodaypic, html.Div(eng)
+        speech_text = eng.iloc[0]
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        # Save the audio to a bytes buffer
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        # Encode the audio in base64
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        # Create a data URI for the audio
+        audiopic_src = f"data:audio/mp3;base64,{audio_base64}"
+        return no_update, diordenadatodaypic, html.Div(eng), audiopic_src
 
-    return html.Div(), [], ""
+    return html.Div(), [], "",""
 
 
 
