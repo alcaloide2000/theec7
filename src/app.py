@@ -23,10 +23,9 @@ def get_pandas_data(dfordenada: str) -> pd.DataFrame:
 dithe = get_pandas_data("the.xlsx")
 
 # Data for the translation warm-up card
-dfthe = dithe['warm']
-lindex = list(dfthe.index)
-lcol = dfthe['structure'].unique()
-loptions = [{'label': str(option), 'value': option} for option in lcol]
+dfthe = dithe['warm'] # take the warm sheet excell
+lcol = dfthe['structure'].unique() #list of the structures
+loptions = [{'label': str(option), 'value': option} for option in lcol] # list of options for the dropdown
 
 # styly of the cards
 card_style = {"width": "100%",
@@ -63,7 +62,6 @@ card_warm = dbc.Card(
 )
 # Data for the reported speech
 dfreport = dithe['reportedsp']
-lindexrep = list(dfreport.index)
 lcolrep = dfreport['story'].unique()
 loptionsrep = [{'label': str(option), 'value': option} for option in lcolrep]
 
@@ -123,7 +121,6 @@ card_pic = dbc.Card(
 )
 # Data for the interrogative challenge
 dfinter = dithe['question']
-lindexinter = list(dfinter.index)
 lcolinter = dfinter['word'].unique()
 loptionsinter = [{'label': str(option), 'value': option} for option in lcolinter]
 # Card for interrogative
@@ -148,6 +145,34 @@ card_inter = dbc.Card(
                 dbc.Button('QUESTION', id='btn-nclicksinter-2', n_clicks=0, color="primary", className="me-1"),
                 html.Div(id='container-button-timestamp2inter'),
                 html.Audio(id='tts-audiointer', controls=True, style={'width': '100%'})
+            ],
+        )
+    ],
+    style=card_style
+)
+
+# Data for the question tag
+dftag = dithe['tags']
+didftag = dftag.to_dict('records')
+# Card for the pictures
+card_tag = dbc.Card(
+    [
+        html.H6(
+            [html.I(className="fas fa-camera fa-3x", style={'color': 'grey'}),
+             ' ',
+             'GUESS THE QUESTION TAG',
+             html.I(className="fas fa-camera fa-3x", style={'color': 'grey'})],
+             className="class-subtitle"
+        ),
+        dbc.CardBody(
+            [
+                html.H4('CHOOSE A SENTENCE', className="card-title"),
+                html.P('click button', className="card-text mt-2"),
+                dbc.Button('SENTENCE', id='btn-nclickstag-1', n_clicks=0, color="info", className="me-1"),
+                html.Div(id='container-button-timestamptag'),
+                dbc.Button('TAG', id='btn-nclickstag-2', n_clicks=0, color="primary", className="me-1"),
+                html.Div(id='container-button-timestamp2tag'),
+                html.Audio(id='tts-audiotag', controls=True, style={'width': '100%'})
             ],
         )
     ],
@@ -227,7 +252,24 @@ app.layout = dbc.Container([
                 'color': 'black',
                 'padding': '5px',
                 'border': '2px solid #d9534f',
-                'borderRadius': '10px'})
+                'borderRadius': '10px'}),
+            dcc.Tab(label='Question tags', children=[
+                dbc.Row([
+                    dbc.Col(card_tag, width={'size': 12})
+                ], justify='center', align='center')
+            ], selected_style={
+                'backgroundColor': '#d9534f',
+                'color': 'white',
+                'fontWeight': 'bold',
+                'padding': '5px',
+                'border': '2px solid #d9534f',
+                'borderRadius': '10px'
+            },
+                    style={'backgroundColor': '#f5f5f5',
+                           'color': 'black',
+                           'padding': '5px',
+                           'border': '2px solid #d9534f',
+                           'borderRadius': '10px'}),
     ]),
     dcc.Store(id="didfthe-stored", data=[]),
     dcc.Store(id="diordenadatoday-stored", data=[]),
@@ -237,6 +279,8 @@ app.layout = dbc.Container([
     dcc.Store(id="didfpic", data=didfpic),
     dcc.Store(id="didfinter-stored", data=[]),
     dcc.Store(id="diordenadatodayinter-stored", data=[]),
+    dcc.Store(id="diordenadatodaytag-stored", data=[]),
+    dcc.Store(id="didftag", data=didftag),
     dcc.Store(id="dirow", data=[]),
 ], fluid=True)
 
@@ -492,7 +536,50 @@ def display_sentence(btn1, btn2, didfpic,diordenadatodaypic):
 
     return html.Div(), [], "",""
 
+# callback for the tag
+@app.callback(
+    [Output('container-button-timestamptag', 'children'),
+    Output('diordenadatodaytag-stored', 'data'),
+     Output('container-button-timestamp2tag', 'children')],
+    Output('tts-audiotag', 'src'),
+    [Input('btn-nclickstag-1', 'n_clicks'),
+     Input('btn-nclickstag-2', 'n_clicks')],
+    [State("didftag", 'data')],
+    [State("diordenadatodaytag-stored", 'data')],
+    prevent_initial_call=True
+)
+def display_sentence(btn1, btn2, didftag,diordenadatodaytag):
+    ctx = callback_context
+    if not ctx.triggered:
+        return html.Div(), [], "" ,""
 
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == "btn-nclickstag-1":
+        dftag = pd.DataFrame(didftag)
+        randomn = random.choice(list(dftag.index))
+        row = dftag.iloc[[randomn]]
+        sen = list(row.loc[:, 'sentence'])[0]
+        msg = sen
+        diordenadatodaytag = row.to_dict('records')
+        return html.Div(msg), diordenadatodaytag, "",""
+
+    elif button_id == "btn-nclickstag-2":
+        row = pd.DataFrame(diordenadatodaytag)
+        tag = row.loc[:, 'tag']
+        speech_text = tag.iloc[0]
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        # Save the audio to a bytes buffer
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        # Encode the audio in base64
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        # Create a data URI for the audio
+        audiopic_src = f"data:audio/mp3;base64,{audio_base64}"
+        return no_update, diordenadatodaytag, html.Div(tag), audiopic_src
+
+    return html.Div(), [], "",""
 
 if __name__ == '__main__':
     app.run_server(debug=True,port =871)
