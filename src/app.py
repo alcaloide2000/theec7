@@ -158,10 +158,10 @@ didftag = dftag.to_dict('records')
 card_tag = dbc.Card(
     [
         html.H6(
-            [html.I(className="fas fa-camera fa-3x", style={'color': 'grey'}),
+            [html.I(className="fas fa-tag fa-3x", style={'color': 'grey'}),
              ' ',
              'GUESS THE QUESTION TAG',
-             html.I(className="fas fa-camera fa-3x", style={'color': 'grey'})],
+             html.I(className="fas fa-tag fa-3x", style={'color': 'grey'})],
              className="class-subtitle"
         ),
         dbc.CardBody(
@@ -178,6 +178,36 @@ card_tag = dbc.Card(
     ],
     style=card_style
 )
+
+# Data for the never done before
+dftag = dithe['never']
+didfnever = dftag.to_dict('records')
+# Card for the pictures
+card_never = dbc.Card(
+    [
+        html.H6(
+            [html.I(className="fas fa-icons fa-3x", style={'color': 'grey'}),
+             ' ',
+             'THINGS YOU HAVE NEVER DONE',
+             html.I(className="fas fa-icons fa-3x", style={'color': 'grey'})],
+             className="class-subtitle"
+        ),
+        dbc.CardBody(
+            [
+                html.H4('CHOOSE A THING YOU HAVE NEVER DONE', className="card-title"),
+                html.P('click button', className="card-text mt-2"),
+                dbc.Button('THING', id='btn-nclicksnever-1', n_clicks=0, color="info", className="me-1"),
+                html.Div(id='container-button-timestampnever'),
+                dbc.Button('ANSWER', id='btn-nclicksnever-2', n_clicks=0, color="primary", className="me-1"),
+                html.Div(id='container-button-timestamp2never'),
+                html.Audio(id='tts-audionever', controls=True, style={'width': '100%'})
+            ],
+        )
+    ],
+    style=card_style
+)
+
+
 
 app.layout = dbc.Container([
     dcc.Tabs(
@@ -253,23 +283,40 @@ app.layout = dbc.Container([
                 'padding': '5px',
                 'border': '2px solid #d9534f',
                 'borderRadius': '10px'}),
-            dcc.Tab(label='Question tags', children=[
-                dbc.Row([
-                    dbc.Col(card_tag, width={'size': 12})
-                ], justify='center', align='center')
-            ], selected_style={
-                'backgroundColor': '#d9534f',
-                'color': 'white',
-                'fontWeight': 'bold',
-                'padding': '5px',
-                'border': '2px solid #d9534f',
-                'borderRadius': '10px'
-            },
-                    style={'backgroundColor': '#f5f5f5',
-                           'color': 'black',
-                           'padding': '5px',
-                           'border': '2px solid #d9534f',
-                           'borderRadius': '10px'}),
+        dcc.Tab(label='Question tags', children=[
+            dbc.Row([
+                dbc.Col(card_tag, width={'size': 12})
+            ], justify='center', align='center')
+        ], selected_style={
+            'backgroundColor': '#d9534f',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'padding': '5px',
+            'border': '2px solid #d9534f',
+            'borderRadius': '10px'
+        },
+        style={'backgroundColor': '#f5f5f5',
+            'color': 'black',
+            'padding': '5px',
+            'border': '2px solid #d9534f',
+            'borderRadius': '10px'}),
+        dcc.Tab(label='never done before', children=[
+            dbc.Row([
+                dbc.Col(card_never, width={'size': 12})
+            ], justify='center', align='center')
+        ], selected_style={
+            'backgroundColor': '#d9534f',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'padding': '5px',
+            'border': '2px solid #d9534f',
+            'borderRadius': '10px'
+        },
+        style={'backgroundColor': '#f5f5f5',
+            'color': 'black',
+            'padding': '5px',
+            'border': '2px solid #d9534f',
+            'borderRadius': '10px'}),
     ]),
     dcc.Store(id="didfthe-stored", data=[]),
     dcc.Store(id="diordenadatoday-stored", data=[]),
@@ -281,6 +328,8 @@ app.layout = dbc.Container([
     dcc.Store(id="diordenadatodayinter-stored", data=[]),
     dcc.Store(id="diordenadatodaytag-stored", data=[]),
     dcc.Store(id="didftag", data=didftag),
+    dcc.Store(id="diordenadatodaynever-stored", data=[]),
+    dcc.Store(id="didfnever", data=didfnever),
     dcc.Store(id="dirow", data=[]),
 ], fluid=True)
 
@@ -581,5 +630,49 @@ def display_sentence(btn1, btn2, didftag,diordenadatodaytag):
 
     return html.Div(), [], "",""
 
+# callback for the never
+@app.callback(
+    [Output('container-button-timestampnever', 'children'),
+    Output('diordenadatodaynever-stored', 'data'),
+     Output('container-button-timestamp2never', 'children')],
+    Output('tts-audionever', 'src'),
+    [Input('btn-nclicksnever-1', 'n_clicks'),
+     Input('btn-nclicksnever-2', 'n_clicks')],
+    [State("didfnever", 'data')],
+    [State("diordenadatodaynever-stored", 'data')],
+    prevent_initial_call=True
+)
+def display_sentence(btn1, btn2, didfnever,diordenadatodaynever):
+    ctx = callback_context
+    if not ctx.triggered:
+        return html.Div(), [], "" ,""
+
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == "btn-nclicksnever-1":
+        dfnever = pd.DataFrame(didfnever)
+        randomn = random.choice(list(dfnever.index))
+        row = dfnever.iloc[[randomn]]
+        sen = list(row.loc[:, 'question'])[0]
+        msg = sen
+        diordenadatodaynever = row.to_dict('records')
+        return html.Div(msg), diordenadatodaynever, "",""
+
+    elif button_id == "btn-nclicksnever-2":
+        row = pd.DataFrame(diordenadatodaynever)
+        answer = row.loc[:, 'answer']
+        speech_text = answer.iloc[0]
+        # Convert text to speech using gTTS
+        tts = gTTS(text=speech_text, lang='en', tld='ca')
+        # Save the audio to a bytes buffer
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        # Encode the audio in base64
+        audio_base64 = base64.b64encode(audio_buffer.getvalue()).decode('utf-8')
+        # Create a data URI for the audio
+        audiopic_src = f"data:audio/mp3;base64,{audio_base64}"
+        return no_update, diordenadatodaynever, html.Div(answer), audiopic_src
+
+    return html.Div(), [], "",""
 if __name__ == '__main__':
     app.run_server(debug=True,port =871)
