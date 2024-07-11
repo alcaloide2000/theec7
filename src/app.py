@@ -342,12 +342,22 @@ app.layout = dbc.Container([
 )
 def update_output(selected_options):
     if 'all' in selected_options:
-        msg = 'You have selected: All option'
         didfthe = dfthe.to_dict('records')
+        totalcards = len(dfthe.axes[0])
+        msg = [
+            "You have selected ALL option. ",
+            "Total number of sentences:",
+            html.Span(f" {totalcards}", style={'color': 'blue','font-weight': 'bold'})
+        ]
         return html.Div(msg), didfthe
     else:
-        msg = f'You have selected: {selected_options}'
         dffiltrada = dfthe.loc[dfthe['structure'] == selected_options]
+        totalcardsfil = len(dffiltrada.axes[0])
+        msg = [
+            f'You have selected: {selected_options}. ',
+            "Total number of sentences:",
+            html.Span(f' {totalcardsfil}',style={'color': 'blue','font-weight': 'bold'})
+            ]
         didfthe = dffiltrada.to_dict('records')
         return html.Div(msg), didfthe
 
