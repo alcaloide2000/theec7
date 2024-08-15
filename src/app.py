@@ -401,6 +401,8 @@ def display_sentence(btn1, btn2, didfthe, diordenadatoday):
         audio_src = f"data:audio/mp3;base64,{audio_base64}"
         return no_update, diordenadatoday, html.Div(eng), audio_src
     return html.Div(), [], "",""
+
+
 # callbacks for reported
 # select an option
 @app.callback(
